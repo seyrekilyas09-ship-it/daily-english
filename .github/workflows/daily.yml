@@ -1,0 +1,27 @@
+name: Daily English Lesson Email
+
+on:
+  schedule:
+    # 06:00 UTC = 09:00 Türkiye saati (UTC+3, yaz/kış değişmiyor)
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # manuel tetikleme (Actions sekmesinden "Run workflow")
+
+jobs:
+  send-daily-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Send daily lesson email
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+          APP_URL: ${{ secrets.APP_URL }}
+        run: python daily_mail.py
