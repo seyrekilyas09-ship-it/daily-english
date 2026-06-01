@@ -1,0 +1,29 @@
+name: Weekly English Quiz Email
+
+on:
+  schedule:
+    # Her PAZAR 06:00 UTC = 09:00 Türkiye saati
+    # Cron format: dakika saat gun-ay ay gun-hafta
+    # "0 6 * * 0" → her Pazar 06:00 UTC
+    - cron: '0 6 * * 0'
+  workflow_dispatch:  # manuel tetikleme
+
+jobs:
+  send-weekly-quiz:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Send weekly quiz email
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+          APP_URL: ${{ secrets.APP_URL }}
+        run: python weekly_quiz_mail.py
